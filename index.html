@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cups.inc - It's all about cups</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #1d1d1f;
+        }
+        
+        /* Navigation */
+        .navbar {
+            position: sticky;
+            top: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            padding: 0 20px;
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 60px;
+        }
+        
+        .logo {
+        display: flex;
+        align-items: center;
+        padding: 8px 12px; /* same as nav links */
+        transition: opacity 0.3s ease; /* add hover transition */
+        }
+
+        .logo img {
+        display: block;
+        height: 20px; /* adjust for your design */
+        width: auto;
+        }
+
+        .logo:hover {
+        opacity: 0.7; /* same hover effect as icons */
+        }
+
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .nav-links li {
+        display: flex;
+        align-items: center;
+        }
+        .nav-links a {
+        text-decoration: none;
+        color: #1d1d1f;
+        font-size: 14px;
+        font-weight: 400;
+        padding: 8px 12px; /* adds clickable area */
+        transition: color 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: #007aff;
+        }
+        
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .search-icon,
+        .cart-icon {
+        display: flex;
+        align-items: center;
+        padding: 8px 12px;
+        transition: opacity 0.3s ease;
+        }
+
+        .search-icon img,
+        .cart-icon img {
+        display: block;
+        }
+
+        .search-icon:hover,
+        .cart-icon:hover {
+        opacity: 0.7; /* subtle hover effect */
+        }
+        
+        /* Mobile Navigation */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+            z-index: 1001;
+            position: relative;
+        }
+        
+        .hamburger-line {
+            width: 20px;
+            height: 2px;
+            background-color: #1d1d1f;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transform-origin: center;
+        }
+        
+        .hamburger-line:first-child {
+            margin-bottom: 4px;
+        }
+        
+        /* Hamburger animation to X */
+        .hamburger.active .hamburger-line:first-child {
+            transform: rotate(45deg) translate(3px, 3px);
+        }
+        
+        .hamburger.active .hamburger-line:last-child {
+            transform: rotate(-45deg) translate(3px, -3px);
+        }
+        
+        /* Mobile menu overlay */
+        .mobile-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transform: translateY(-100%);
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .mobile-menu-overlay.active {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .mobile-menu-overlay.closing {
+            transform: translateY(-100%);
+            opacity: 0;
+        }
+        
+        /* Close button in overlay */
+        .mobile-close-button {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        .mobile-menu-overlay.active .mobile-close-button {
+            opacity: 1;
+            transform: translateY(0);
+            transition-delay: 0.2s;
+        }
+        
+        .mobile-close-line {
+            width: 20px;
+            height: 2px;
+            background-color: #1d1d1f;
+            position: absolute;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        .mobile-close-line:first-child {
+            transform: rotate(45deg);
+        }
+        
+        .mobile-close-line:last-child {
+            transform: rotate(-45deg);
+        }
+        
+        .mobile-close-button:hover .mobile-close-line {
+            background-color: #007aff;
+        }
+        
+        .mobile-menu-nav {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            margin-top: 60px;
+        }
+        
+        .mobile-menu-nav a {
+            font-size: 24px;
+            font-weight: 400;
+            color: #1d1d1f;
+            text-decoration: none;
+            padding: 15px 30px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+            animation-fill-mode: forwards;
+        }
+        
+        .mobile-menu-overlay.active .mobile-menu-nav a {
+            animation: slideInUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+        }
+        
+        .mobile-menu-overlay.closing .mobile-menu-nav a {
+            animation: slideOutDown 0.4s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+        }
+        
+        .mobile-menu-overlay.closing .mobile-close-button {
+            animation: fadeOutUp 0.3s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+        }
+        
+        .mobile-menu-nav a:nth-child(1) { animation-delay: 0.1s; }
+        .mobile-menu-nav a:nth-child(2) { animation-delay: 0.15s; }
+        .mobile-menu-nav a:nth-child(3) { animation-delay: 0.2s; }
+        .mobile-menu-nav a:nth-child(4) { animation-delay: 0.25s; }
+        .mobile-menu-nav a:nth-child(5) { animation-delay: 0.3s; }
+        .mobile-menu-nav a:nth-child(6) { animation-delay: 0.35s; }
+        .mobile-menu-nav a:nth-child(7) { animation-delay: 0.4s; }
+        .mobile-menu-nav a:nth-child(8) { animation-delay: 0.45s; }
+        .mobile-menu-nav a:nth-child(9) { animation-delay: 0.5s; }
+        .mobile-menu-nav a:nth-child(10) { animation-delay: 0.55s; }
+        
+        /* Closing animations - reverse order for smooth exit */
+        .mobile-menu-overlay.closing .mobile-menu-nav a:nth-child(1) { animation-delay: 0.25s; }
+        .mobile-menu-overlay.closing .mobile-menu-nav a:nth-child(2) { animation-delay: 0.2s; }
+        .mobile-menu-overlay.closing .mobile-menu-nav a:nth-child(3) { animation-delay: 0.15s; }
+        .mobile-menu-overlay.closing .mobile-menu-nav a:nth-child(4) { animation-delay: 0.1s; }
+        .mobile-menu-overlay.closing .mobile-menu-nav a:nth-child(5) { animation-delay: 0.05s; }
+        .mobile-menu-overlay.closing .mobile-menu-nav a:nth-child(6) { animation-delay: 0s; }
+        .mobile-menu-overlay.closing .mobile-menu-nav a:nth-child(7) { animation-delay: 0s; }
+        .mobile-menu-overlay.closing .mobile-menu-nav a:nth-child(8) { animation-delay: 0s; }
+        .mobile-menu-overlay.closing .mobile-menu-nav a:nth-child(9) { animation-delay: 0s; }
+        .mobile-menu-overlay.closing .mobile-menu-nav a:nth-child(10) { animation-delay: 0s; }
+        
+        .mobile-menu-nav a:hover {
+            background: rgba(0, 122, 255, 0.1);
+            color: #007aff;
+            transform: translateY(-2px);
+        }
+        
+        @keyframes slideInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes slideOutDown {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+        }
+        
+        @keyframes fadeOutUp {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+        }
+        
+        /* Close button area - invisible but clickable */
+        .mobile-menu-close-area {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+   
+
+        
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .nav-links {
+                gap: 20px;
+            }
+            
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hamburger {
+                display: block;
+            }
+            
+        }
+
+/* Hero Section */
+        .hero {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    text-align: center;
+    color: rgb(36, 36, 36);
+    overflow: hidden;
+}
+
+.hero-video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    transform: translate(-50%, -50%);
+    object-fit: contain; /* 👈 shows full video, no cropping */
+    z-index: -2;
+    background: rgb(255, 255, 255); /* fills the gaps when aspect ratio doesn’t match */
+}
+
+/* 👇 Mobile adjustment */
+@media (max-width: 768px) {
+  .hero-video {
+    transform: translate(-50%, -40%); /* move video down */
+  }
+}
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: none;
+    z-index: -1;
+}
+
+
+
+        
+        /* Primary CTA (filled) */
+.cta-button {
+    display: inline-block;
+    padding: 8px 30px;
+    background: #007aff;
+    color: white;
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.cta-button:hover {
+    background: #0056cc;
+}
+
+/* Secondary CTA (outlined) */
+.cta-button-outline {
+    display: inline-block;
+    padding: 8px 30px;
+    background: transparent;
+    color: #000000;
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: 500;
+    border: 2px solid #007aff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.cta-button-outline:hover {
+    background: #007aff;
+    color: white;
+}
+
+
+.cta-buttone-outline {
+    display: inline-block;
+    padding: 7px 30px;
+    background: transparent;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: 500;
+    border: 2px solid #007aff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.cta-buttone-outline:hover {
+    background: #007aff;
+    color: white;
+}
+        
+        /* Second Section */
+.image-section {
+    position: relative;
+    height: 70vh;
+    display: flex;
+    flex-direction: column; /* stack content vertically */
+    align-items: center;    /* center horizontally */
+    justify-content: flex-start; /* move content to top */
+    text-align: center;
+    color: rgb(255, 255, 255);
+    overflow: hidden;
+    padding-top: 60px; /* optional spacing from top */
+}
+
+.section-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* <-- change from cover to contain */
+    object-position: top center; /* align top-center so it doesn't leave empty space at top */
+    z-index: -2;
+}
+
+.image-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0);
+    z-index: -1;
+}
+
+.image-section h2 {
+    font-size: 3rem;
+    font-weight: 600;
+    margin-bottom: 30px;
+    font-style: normal;
+}
+
+        
+/* Cards Section */
+.cards-section {
+    padding: 12px; /* space around the cards */
+    background: #f5f5f7;
+}
+
+.cards-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 cards horizontally by default */
+    gap: 12px; /* space between cards */
+    justify-content: center;
+}
+
+.card {
+    position: relative;
+    width: 100%; /* allow grid to control width */
+    max-width: 942px; /* card max width */
+    height: 550px; /* fixed height */
+    overflow: hidden;
+    border-radius: 0;
+}
+
+.card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.card-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* center horizontally */
+    justify-content: flex-start; /* content at top */
+
+    padding: 12px; /* adjustable padding */
+    text-align: center;
+    color: white;
+}
+
+.card-overlay h2 {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+/* Example CTA button */
+.card-overlay .cta-btn {
+    background: #ff6b6b;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 1rem;
+    border-radius: 5px;
+}
+
+
+
+
+
+        
+        /* About Section */
+        .about-section {
+            padding: 80px 30px;
+            text-align: left;
+            background: rgb(20, 20, 20);
+        }
+        
+        .about-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .about-content p {
+            font-size: 12px;
+            line-height: 1.8;
+            color: #86868b;
+        }
+        
+        /* Footer */
+        .footer {
+            background: #000000;
+            color: #f5f5f7;
+            padding: 40px 20px 30px;
+        }
+        
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .footer-columns {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+            margin-top: 20px;
+        }
+        
+        .footer-column h3 {
+            font-size: 12px;
+            font-weight: 400;
+            margin-bottom: 14px;
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-column ul li a {
+            color: #86868b;
+            text-decoration: none;
+            font-size: 12px;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-column ul li a:hover {
+            color: #f5f5f7;
+        }
+        
+        .footer1 {
+        text-align: left;       /* center align */
+        padding-top:20px;
+        border-top: 1px solid #42424500;
+        color: #86868b;           /* muted gray like Apple’s footer */
+        font-size: 12px;          /* readable size */
+        border-top: 1px solid #424245;
+        
+    }
+
+        
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .nav-links {
+                gap: 20px;
+            }
+            
+            .hero-content h1 {
+                font-size: 3rem;
+            }
+            
+            .image-section h2 {
+                font-size: 2.5rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .search-bar {
+                width: 150px;
+            }
+            .hero {
+            height: 70vh; /* 👈 override hero height here */
+            }
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero-content .subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .image-section h2 {
+                font-size: 2rem;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .cards-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .card {
+                height: 500px;
+            }
+            
+            .card h2 {
+                font-size: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .navbar {
+                padding: 0 15px;
+            }   
+            .hero {
+            height: 93vh; /* 👈 even smaller on phones */
+            }
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+            
+            .hero-content .subtitle {
+                font-size: 1rem;
+            }
+            
+            .image-section h2 {
+                font-size: 1.5rem;
+            }
+            
+            .about-content p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <header class="navbar">
+  <nav class="nav-container">
+    <!-- Logo as link -->
+    <a href="index.html" class="logo">
+      <img src="https://res.cloudinary.com/dgxb8m8lr/image/upload/v1757440816/cups_rthby0.svg" alt="cups.inc logo" style="height:15px; width:auto;">
+    </a>
+            <ul class="nav-links">
+                <li><a href="">Store</a></li>
+                <li><a href="">Premium</a></li>
+                <li><a href="">Designer</a></li>
+                <li><a href="">Porcelain</a></li>
+                <li><a href="">Glass</a></li>
+                <li><a href="">Accessories</a></li>
+            </ul>
+            <div class="nav-right">
+                <!-- Search icon as image link -->
+  <a href="search.html" class="search-icon" aria-label="Search">
+    <img src="https://res.cloudinary.com/dgxb8m8lr/image/upload/v1757440816/search_ajpiy6.svg" alt="Search" style="height:18px; width:auto;">
+  </a>
+                <!-- Cart icon -->
+  <a href="cart.html" class="cart-icon" aria-label="Cart">
+    <img src="https://res.cloudinary.com/dgxb8m8lr/image/upload/v1757440816/shop_iuwu5d.svg" alt="Cart" style="height:18px; width:auto;">
+  </a>
+                <button class="hamburger" id="hamburger" aria-label="Toggle navigation menu">
+                    <div class="hamburger-line"></div>
+                    <div class="hamburger-line"></div>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay">
+        <button class="mobile-close-button" id="mobileCloseButton" aria-label="Close navigation menu">
+            <div class="mobile-close-line"></div>
+            <div class="mobile-close-line"></div>
+        </button>
+        <div class="mobile-menu-close-area" id="mobileMenuCloseArea"></div>
+        <nav class="mobile-menu-nav">
+            <a href="#">Store</a>
+            <a href="#">Premium</a>
+            <a href="#">Designer</a>
+            <a href="#">Porcelain</a>
+            <a href="#">Glass</a>
+            <a href="#">Accessories</a>
+        </nav>
+    </div>
+
+
+
+    <!-- Hero Section -->
+<section class="hero">
+    <video class="hero-video" autoplay muted loop>
+        <source src="https://res.cloudinary.com/dgxb8m8lr/video/upload/v1757436638/Coffee_Cup_Product_Reveal_Video_dnw3w2.mp4" type="video/mp4">
+    </video>
+    <div class="image-section" style="margin-top: 10px;">
+        <h2 style="font-style: normal; font-weight: 600; margin-bottom: 10px; color: #151515; font-size: clamp(3rem, 5vw, 4rem);">cups.com</h2>
+        <p class="subtitle" style="margin-bottom: 20px;font-weight: 300; font-size: 1.3rem;color: #86868b;">It's all about cups</p>
+        <div class="cta-buttons">
+            <a href="#" class="cta-button" style="margin-right: 20px;">Learn More</a>
+            <a href="#" class="cta-buttone-outline" style="color: #000000;">Shop Now</a>
+        </div>
+    </div>
+</section>
+
+
+    <!-- Second Section -->
+    <section class="image-section">
+    <img src="https://res.cloudinary.com/dgxb8m8lr/image/upload/v1757476383/Gemini_Generated_Image_sb317zsb317zsb31_1_jvwv6p.jpg" 
+         alt="Beautiful cups collection" class="section-image">
+
+    <div style="position: relative; z-index: 1; text-align: center;">
+        <!-- Heading with bottom spacing -->
+        <h2 style="font-style: normal; font-weight: 500; margin-bottom: 10px;color: #ececec;">
+            Ceramic Cups.
+        </h2>
+
+        <!-- Subtitle with bottom spacing -->
+        <p class="subtitle" style="margin-bottom: 20px; font-weight: 200; font-size: 1.3rem;color: #ababab;">
+            Down to earth
+        </p>
+
+
+        <!-- Buttons untouched -->
+        <a href="#" class="cta-button" style="margin-right: 20px;">Learn More</a>
+        <a href="#" class="cta-buttone-outline">Shop Now</a>
+    </div>
+</section>
+
+
+    <!-- Cards Section -->
+<section class="cards-section">
+    <div class="cards-container">
+        <div class="card">
+            <img src="https://res.cloudinary.com/dgxb8m8lr/image/upload/v1757436645/Gemini_Generated_Image_r6fwi2r6fwi2r6fw_1_ennq98.png" alt="Premium cups" class="card-image">
+            <div class="card-overlay">
+                <h2 style="color: rgb(43, 43, 43);font-weight: 500;margin-bottom: 5px;">Premium Collection.</h2>
+                <p class="subtitle" style="margin-bottom: 20px;font-weight: 300; font-size: 1.3rem;color: #86868b;">Cups with every mineral</p>
+                <div style="display: flex; gap: 12px;">
+                    <a href="#" class="cta-button">Learn More</a>
+                    
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://res.cloudinary.com/dgxb8m8lr/image/upload/v1757436648/pexels-beyzaefe-11484383_1_1_m9um3r.png" alt="Ceramic cups" class="card-image">
+            <div class="card-overlay">
+                <h2 style="color: rgb(43, 43, 43);font-weight: 500;margin-bottom: 5px;">Designer Series.</h2>
+                <p class="subtitle" style="margin-bottom: 20px;font-weight: 300; font-size: 1.3rem;color: #86868b;">The excusites</p>
+                <div style="display: flex; gap: 12px;">
+                    <a href="#" class="cta-button">Learn More</a>
+                    
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://res.cloudinary.com/dgxb8m8lr/image/upload/v1757436647/Gemini_Generated_Image_dnfp20dnfp20dnfp_1_pecfec.png" alt="Travel cups" class="card-image">
+            <div class="card-overlay">
+                <h2 style="color: rgb(43, 43, 43);font-weight: 500;margin-bottom: 5px;">Daily Routines.</h2>
+                <p class="subtitle" style="margin-bottom: 20px;font-weight: 300; font-size: 1.3rem;color: #86868b;">Not just regular</p>
+                <div style="display: flex; gap: 12px;">
+                    <a href="#" class="cta-button">Learn More</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://res.cloudinary.com/dgxb8m8lr/image/upload/v1757436646/Gemini_Generated_Image_dnfp20dnfp20dnfp_1-1_ter6mv.png" alt="Designer cups" class="card-image">
+            <div class="card-overlay">
+                <h2 style="color: rgb(43, 43, 43);font-weight: 500;margin-bottom: 5px;">Porcelain Series</h2>
+                <p class="subtitle" style="margin-bottom: 20px;font-weight: 300; font-size: 1.3rem;color: #86868b;">Its typically vibrant</p>
+                <div style="display: flex; gap: 12px;">
+                    <a href="#" class="cta-button">Learn More</a>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- accesories Section -->
+    <section class="image-section">
+    <img src="https://res.cloudinary.com/dgxb8m8lr/image/upload/v1757436650/Gemini_Generated_Image_sb317zsb317zsb31_1-1_kk2svd.png" 
+         alt="Beautiful cups collection" class="section-image">
+
+    <div style="position: relative; z-index: 1; text-align: center;">
+        <!-- Heading with bottom spacing -->
+        <h2 style="font-style: normal; font-weight: 600; margin-bottom: 10px;color: #3a3730;">
+            Accessories.
+        </h2>
+
+        <!-- Subtitle with bottom spacing -->
+        <!-- Subtitle with bottom spacing -->
+        <p class="subtitle" style="margin-bottom: 20px; font-weight: 300; font-size: 1.3rem;color: #817a6c;">
+            Adds tremendous value
+        </p>
+
+
+        <!-- Buttons untouched -->
+        <a href="#" class="cta-button" style="margin-right: 20px;">Learn More</a>
+        <a href="#" class="cta-buttone-outline" style="color: #000000;">Shop Now</a>
+    </div>
+</section>
+
+
+    <!-- About Section -->
+    <section class="about-section">
+        <div class="about-content">
+            <p>At cups.inc, we believe that every sip should be an experience. Our mission is to craft the perfect cup for every moment, combining timeless design with modern functionality. From our sustainable materials to our commitment to quality, we're dedicated to bringing you cups that enhance your daily rituals and respect our planet.</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-columns">
+                <div class="footer-column">
+                    <h3>About</h3>
+                    <ul>
+                        <li><a href="#">Our Story</a></li>
+                        <li><a href="#">Mission</a></li>
+                        <li><a href="#">Sustainability</a></li>
+                        <li><a href="#">Careers</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Support</h3>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Shipping Info</a></li>
+                        <li><a href="#">Returns</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Shop</h3>
+                    <ul>
+                        <li><a href="#">All Cups</a></li>
+                        <li><a href="#">New Arrivals</a></li>
+                        <li><a href="#">Best Sellers</a></li>
+                        <li><a href="#">Gift Cards</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Policies</h3>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
+                        <li><a href="#">Warranty</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Contact</h3>
+                    <ul>
+                        <li><a href="#">hello@cups.inc</a></li>
+                        <li><a href="#">1-800-CUPS-INC</a></li>
+                        <li><a href="#">Find a Store</a></li>
+                        <li><a href="#">Press</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer1">
+                <p>copyright reserved to amalanilkumar</p>
+    
+</div>
+
+        </div>
+    </footer>
+<script>
+/**
+         * Mobile Navigation Menu Controller
+         * Handles the Apple-style mobile navigation with smooth animations
+         */
+        class MobileNavigation {
+            constructor() {
+                // Get DOM elements
+                this.hamburger = document.getElementById('hamburger');
+                this.overlay = document.getElementById('mobileMenuOverlay');
+                this.closeArea = document.getElementById('mobileMenuCloseArea');
+                this.closeButton = document.getElementById('mobileCloseButton');
+                this.menuLinks = document.querySelectorAll('.mobile-menu-nav a');
+                
+                // Track menu state
+                this.isOpen = false;
+                
+                // Initialize event listeners
+                this.init();
+            }
+            
+            /**
+             * Initialize all event listeners
+             */
+            init() {
+                // Hamburger button click
+                this.hamburger.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.toggleMenu();
+                });
+                
+                // Close button click
+                this.closeButton.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.closeMenu();
+                });
+                
+                // Close area click (clicking outside menu items)
+                this.closeArea.addEventListener('click', () => {
+                    this.closeMenu();
+                });
+                
+                // Menu link clicks - close menu when navigating
+                this.menuLinks.forEach(link => {
+                    link.addEventListener('click', () => {
+                        this.closeMenu();
+                    });
+                });
+                
+                // Escape key to close menu
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && this.isOpen) {
+                        this.closeMenu();
+                    }
+                });
+                
+                // Prevent body scroll when menu is open
+                this.overlay.addEventListener('transitionstart', () => {
+                    if (!this.isOpen) {
+                        document.body.style.overflow = 'hidden';
+                    }
+                });
+                
+                this.overlay.addEventListener('transitionend', () => {
+                    if (!this.isOpen) {
+                        document.body.style.overflow = '';
+                    }
+                });
+            }
+            
+            /**
+             * Toggle menu open/close state
+             */
+            toggleMenu() {
+                if (this.isOpen) {
+                    this.closeMenu();
+                } else {
+                    this.openMenu();
+                }
+            }
+            
+            /**
+             * Open the mobile menu with animations
+             */
+            openMenu() {
+                this.isOpen = true;
+                
+                // Add active classes for animations
+                this.hamburger.classList.add('active');
+                this.overlay.classList.add('active');
+                
+                // Prevent body scroll
+                document.body.style.overflow = 'hidden';
+                
+                // Update ARIA attributes for accessibility
+                this.hamburger.setAttribute('aria-expanded', 'true');
+                this.overlay.setAttribute('aria-hidden', 'false');
+            }
+            
+            /**
+             * Close the mobile menu with animations
+             */
+            closeMenu() {
+                this.isOpen = false;
+                
+                // Add closing class for smooth exit animation
+                this.overlay.classList.add('closing');
+                this.hamburger.classList.remove('active');
+                
+                // Remove active and closing classes after animation completes
+                setTimeout(() => {
+                    this.overlay.classList.remove('active');
+                    this.overlay.classList.remove('closing');
+                    document.body.style.overflow = '';
+                }, 500);
+                
+                // Update ARIA attributes for accessibility
+                this.hamburger.setAttribute('aria-expanded', 'false');
+                this.overlay.setAttribute('aria-hidden', 'true');
+            }
+        }
+        
+        /**
+         * Initialize mobile navigation when DOM is loaded
+         */
+        document.addEventListener('DOMContentLoaded', () => {
+            new MobileNavigation();
+        });
+        
+        /**
+         * Handle window resize to close menu if switching to desktop
+         */
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                const mobileNav = document.querySelector('.mobile-menu-overlay');
+                const hamburger = document.getElementById('hamburger');
+                
+                if (mobileNav && mobileNav.classList.contains('active')) {
+                    mobileNav.classList.remove('active');
+                    hamburger.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            }
+        });
+
+(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97c80f5a24e272c9',t:'MTc1NzQzNTMyMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();
+</script>
+</body>
+</html>
